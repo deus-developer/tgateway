@@ -1,0 +1,194 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tgateway"
+description = "TGateway: the simplest way to work with a Telegram Gateway API"
+readme = "README.md"
+authors = [
+    { name = "Artem Ukolov", email = "deusdeveloper@yandex.com" },
+]
+
+keywords = [
+    "telegram",
+    "auth",
+    "verify",
+    "sms",
+]
+
+requires-python = ">=3.9"
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: AsyncIO",
+    "Framework :: Pydantic",
+    "Framework :: Pydantic :: 2",
+    "Framework :: aiohttp",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+dynamic = ["version"]
+
+dependencies = [
+    "aiohttp >= 3.7.0",
+    "pydantic >= 2.0"
+]
+
+[project.optional-dependencies]
+# public distributions
+cli = [
+    "typer>=0.7.0",
+]
+
+# dev dependencies
+optionals = ["tgateway[cli]"]
+
+types = [
+    "tgateway[optionals]",
+    "mypy==1.11.2",
+]
+
+lint = [
+    "tgateway[types]",
+    "ruff==0.6.9",
+    "bandit==1.7.10",
+    "semgrep==1.90.0",
+    "codespell==2.3.0",
+]
+
+dev = [
+    "tgateway[optionals,lint]",
+    "pre-commit==4.0.0",
+]
+
+[project.urls]
+Homepage = "https://tgateway.deusdeveloper.com/latest/"
+Documentation = "https://tgateway.deusdeveloper.com/latest/getting-started/"
+Tracker = "https://github.com/deus-developer/tgateway/issues"
+Source = "https://github.com/deus-developer/tgateway"
+Telegram = "https://t.me/tgateway"
+
+[project.scripts]
+tgateway = "tgateway.__main__:cli"
+
+[tool.hatch.version]
+path = "tgateway/__about__.py"
+
+[tool.mypy]
+files = ["tgateway"]
+strict = true
+python_version = "3.9"
+ignore_missing_imports = true
+install_types = true
+non_interactive = true
+plugins = ["pydantic.mypy"]
+
+# from https://blog.wolt.com/engineering/2021/09/30/professional-grade-mypy-configuration/
+disallow_untyped_defs = true
+no_implicit_optional = true
+check_untyped_defs = true
+warn_return_any = true
+show_error_codes = true
+warn_unused_ignores = true
+
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+disallow_any_unimported = false
+
+[tool.ruff]
+fix = true
+line-length = 88
+target-version = "py39"
+include = [
+    "tgateway/**/*.py",
+    "tgateway/**/*.pyi",
+    "examples/**/*.py",
+    "pyproject.toml",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors     https://docs.astral.sh/ruff/rules/#error-e
+    "W",     # pycodestyle warnings   https://docs.astral.sh/ruff/rules/#warning-w
+    "C90",   # mccabe                 https://docs.astral.sh/ruff/rules/#mccabe-c90
+    "N",     # pep8-naming            https://docs.astral.sh/ruff/rules/#pep8-naming-n
+    "D",     # pydocstyle             https://docs.astral.sh/ruff/rules/#pydocstyle-d
+    "I",     # isort                  https://docs.astral.sh/ruff/rules/#isort-i
+    "F",     # pyflakes               https://docs.astral.sh/ruff/rules/#pyflakes-f
+    "ASYNC", # flake8-async           https://docs.astral.sh/ruff/rules/#flake8-async-async
+    "C4",    # flake8-comprehensions  https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
+    "B",     # flake8-bugbear         https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
+    "Q",     # flake8-quotes          https://docs.astral.sh/ruff/rules/#flake8-quotes-q
+    "T20",   # flake8-print           https://docs.astral.sh/ruff/rules/#flake8-print-t20
+    "SIM",   # flake8-simplify        https://docs.astral.sh/ruff/rules/#flake8-simplify-sim
+    "PT",    # flake8-pytest-style    https://docs.astral.sh/ruff/rules/#flake8-pytest-style-pt
+    "PTH",   # flake8-use-pathlib     https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
+    "TCH",   # flake8-type-checking   https://docs.astral.sh/ruff/rules/#flake8-type-checking-tch
+    "RUF",   # Ruff-specific rules    https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
+    "PERF",  # Perflint               https://docs.astral.sh/ruff/rules/#perflint-perf
+    "UP",    # pyupgrade              https://docs.astral.sh/ruff/rules/#pyupgrade-up
+]
+
+ignore = [
+    "ASYNC109", # own timeout implementation
+
+    "E501",     # line too long, handled by formatter later
+    "C901",     # too complex
+
+    # todo pep8-naming
+    "N817",     # CamelCase `*` imported as acronym `*`
+    "N815",     # Variable `*` in class scope should not be mixedCase
+    "N803",     # Argument name `expandMessageExamples` should be lowercase
+
+    # todo pydocstyle
+    "D100",     # missing docstring in public module
+    "D101",
+    "D102",
+    "D103",
+    "D104",     # missing docstring in public package
+    "D105",     # missing docstring in magic methods
+    "D106",     # missing docstring in public nested class
+    "D107",     # missing docstring in __init__
+]
+
+[tool.ruff.lint.isort]
+case-sensitive = true
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = [
+    "typer.Option",
+    "fastapi.Header",
+]
+
+[tool.bandit]
+
+[tool.codespell]
+skip = "./venv*,./htmlcov"
+ignore-words = ".codespell-whitelist.txt"
