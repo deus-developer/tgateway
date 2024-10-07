@@ -173,6 +173,12 @@ ignore = [
     "D107",     # missing docstring in __init__
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"examples/**" = [
+    "T201",
+    "C408"
+]
+
 [tool.ruff.lint.isort]
 case-sensitive = true
 
