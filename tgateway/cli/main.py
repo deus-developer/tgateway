@@ -28,7 +28,7 @@ def version_callback(version: bool) -> None:
         import platform
 
         typer.echo(
-            f"Running TelegramGateway {__version__} with {platform.python_implementation()} "
+            f"Running TGateway {__version__} with {platform.python_implementation()} "
             f"{platform.python_version()} on {platform.system()}",
         )
 

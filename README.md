@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/github/license/deus-developer/tgateway)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/deus-developer/tgateway/release_pypi.yaml)
 
-Telegram Gateway Python SDK is a lightweight and asynchronous client library designed to interface with the [Telegram Gateway API](https://core.telegram.org/gateway).
+Telegram Gateway Python SDK is a lightweight and asynchronous client library designed to interface with the [Telegram Gateway API](https://core.telegram.org/gateway). It provides a powerful and easy-to-use interface for sending and managing verification messages, checking their status, and revoking them. Alongside the SDK, the `tgateway` library also includes a CLI tool for performing these operations directly from the command line.
 
 ## ✨ Features
 
@@ -14,16 +14,17 @@ Telegram Gateway Python SDK is a lightweight and asynchronous client library des
 - **Integrity Validation**: Ensure authenticity of incoming reports using signature validation.
 - **Easy to Use**: Designed with simplicity and usability in mind.
 - **Fully Asynchronous**: Built on `asyncio` for high-performance integration.
+- **Command Line Interface (CLI)**: Use the `TGateway CLI` to manage your interactions without writing code.
 
 ## 🏗️ Installation
 
-Install the SDK using pip:
+Install the SDK and CLI using pip:
 
 ```bash
-pip install tgateway
+pip install tgateway[cli]
 ```
 
-## 📚 Usage
+## 📚 SDK Usage
 
 Here's a basic example to get started with the `TelegramGateway` client:
 
@@ -116,6 +117,100 @@ async def main():
 asyncio.run(main())
 ```
 
+## 📚 CLI Usage
+
+The TGateway CLI is part of the `tgateway` library and provides an easy way to interact with the Telegram Gateway API using simple commands. Below is an overview of the available commands and their usage.
+
+### Command Overview
+
+The TGateway CLI provides several commands for interacting with the Telegram Gateway API:
+
+1. `send`: Send a verification message to a phone number.
+2. `ability`: Check the ability to send a message to a phone number.
+3. `check`: Check the status of a previously sent verification request.
+4. `revoke`: Revoke a previously sent verification message.
+5. `--version`: Display the current version of the CLI and its dependencies.
+
+### Sending a Verification Message
+
+To send a verification message, use the `send` command:
+
+```bash
+tgateway send --access-token "<access-token>" --phone-number "+1234567890" [OPTIONS]
+```
+
+**Required Options:**
+
+- `--access-token`: Your Telegram Gateway API access token.
+- `--phone-number`: Phone number to send the verification message to, in E.164 format (e.g., "+1234567890").
+
+**Optional Parameters:**
+
+- `--request-id`: Use an existing request ID to resend a message free of charge.
+- `--sender-username`: Username of the Telegram channel from which the code will be sent.
+- `--code`: Custom verification code (4 to 8 characters, numeric).
+- `--code-length`: Length of the verification code (if auto-generated). Supports values between 4 to 8.
+- `--callback-url`: URL to receive delivery reports related to the sent message.
+- `--ttl`: Time-to-live for the message in seconds before it expires.
+
+**Example:**
+
+```bash
+tgateway send --access-token "<access-token>" --phone-number "+1234567890" --code-length 6
+```
+
+### Checking Send Ability for a Phone Number
+
+To check if a verification message can be sent to a specific number:
+
+```bash
+tgateway ability --access-token "<access-token>" --phone-number "+1234567890"
+```
+
+### Checking the Status of a Verification Request
+
+Check the status of a previously sent verification message using its `request-id`:
+
+```bash
+tgateway check --access-token "<access-token>" --request-id "<request-id>"
+```
+
+### Revoking a Verification Message
+
+Revoke a sent verification message using the `request-id`:
+
+```bash
+tgateway revoke --access-token "<access-token>" --request-id "<request-id>"
+```
+
+### Show CLI Version
+
+Check the version of the CLI, along with Python and system information:
+
+```bash
+tgateway --version
+```
+
+**Example Output:**
+
+```
+Running TGateway 0.1.0 with CPython 3.9.0 on Linux
+```
+
+### Command Help
+
+Each command has its own help documentation. To view detailed information about a specific command, use:
+
+```bash
+tgateway <command> --help
+```
+
+For example:
+
+```bash
+tgateway send --help
+```
+
 ## 🏛️ Project Structure
 
 The project is structured for ease of use and maintainability:
@@ -150,6 +245,7 @@ This project is licensed under the [Apache License](LICENSE).
 
 Contributions are welcome! If you'd like to contribute, please fork the repository and submit a pull request. For major changes, open an issue first to discuss what you would like to change.
 
+### Contribution Workflow
 1. Fork the repository.
 2. Create your feature branch: `git checkout -b feature/my-new-feature`.
 3. Commit your changes: `git commit -m 'Add some feature'`.
@@ -158,7 +254,7 @@ Contributions are welcome! If you'd like to contribute, please fork the reposito
 
 ## 💬 Contact
 
-For questions, support, or just to connect, please reach out to the project maintainers:
+For questions, support, or just to connect, reach out to the project maintainers:
 
 - **Email**: [deusdeveloper@yandex.com](mailto:deusdeveloper@yandex.com)
 - **Telegram**: [@DeusDeveloper](https://t.me/DeusDeveloper)
@@ -167,4 +263,4 @@ For questions, support, or just to connect, please reach out to the project main
 
 ---
 
-Enjoy using the Telegram Gateway Python SDK! 🎉
+Enjoy using the Telegram Gateway Python SDK and CLI! 🎉
