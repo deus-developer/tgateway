@@ -23,7 +23,6 @@ from tgateway.types import (
 )
 
 logging.basicConfig(level=logging.INFO)
-app = FastAPI()
 
 
 @asynccontextmanager
@@ -38,7 +37,10 @@ async def lifespan(_: FastAPI):
         yield {"gateway": gateway}
 
 
-@app.get("/webhook")
+app = FastAPI(lifespan=lifespan)
+
+
+@app.post("/webhook")
 async def webhook_handler(
     request: Request,
     x_request_timestamp: int = Header(alias="X-Request-Timestamp"),
@@ -47,8 +49,9 @@ async def webhook_handler(
     gateway = cast(TelegramGateway, request.state.gateway)
     body = await request.body()
 
-    print(
+    logging.info(
         dict(
+            event="new_incoming_request",
             x_request_timestamp=x_request_timestamp,
             x_request_signature=x_request_signature,
             body=body,
@@ -77,5 +80,14 @@ async def webhook_handler(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid request body"
         )
 
-    logging.info("New incoming request: %s", request_status)
+    logging.info(
+        dict(
+            event="valid_incoming_request",
+            x_request_timestamp=x_request_timestamp,
+            x_request_signature=x_request_signature,
+            body=body,
+            request_status=request_status,
+        )
+    )
+
     return JSONResponse(content={"ok": True}, status_code=status.HTTP_200_OK)
