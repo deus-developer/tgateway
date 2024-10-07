@@ -1,3 +1,8 @@
+import datetime
+from abc import (
+    ABC,
+    abstractmethod,
+)
 from collections.abc import Generator
 from typing import (
     TYPE_CHECKING,
@@ -9,6 +14,7 @@ from typing import (
 
 from pydantic import (
     BaseModel,
+    field_serializer,
     model_validator,
 )
 from typing_extensions import Self
@@ -33,10 +39,22 @@ if TYPE_CHECKING:
 
 
 class TelegramGatewayMethod(
-    TelegramGatewayContextMixin, BaseModel, Generic[TelegramGatewayResultT]
+    TelegramGatewayContextMixin, BaseModel, Generic[TelegramGatewayResultT], ABC
 ):
-    __returning__: ClassVar[type]
-    __api_method__: ClassVar[str]
+    if TYPE_CHECKING:
+        __returning__: ClassVar[type]
+        __api_method__: ClassVar[str]
+    else:
+
+        @property
+        @abstractmethod
+        def __returning__(self) -> type:
+            pass
+
+        @property
+        @abstractmethod
+        def __api_method__(self) -> str:
+            pass
 
     async def emit(self, client: "TelegramGateway") -> TelegramGatewayResultT:
         return await client.make_request(self)
@@ -80,8 +98,8 @@ class SendVerificationMessage(TelegramGatewayMethod[RequestStatus]):
     """A URL where you want to receive delivery reports related to the sent message."""
     payload: Optional[str] = None
     """Custom payload, 0-128 bytes. This will not be displayed to the user, use it for your internal processes."""
-    ttl: Optional[int] = None
-    """Time-to-live (in seconds) before the message expires and is deleted. The message will not be deleted if it has already been read. If not specified, the message will not be deleted."""
+    ttl: Optional[datetime.timedelta] = None
+    """Time-to-live before the message expires and is deleted. The message will not be deleted if it has already been read. If not specified, the message will not be deleted."""
 
     @model_validator(mode="after")
     def _validator(self) -> Self:
@@ -103,10 +121,16 @@ class SendVerificationMessage(TelegramGatewayMethod[RequestStatus]):
         ):
             raise ValueError("payload must be less than 128 bytes")
 
-        if not (self.ttl is None or TTL_MIN <= self.ttl <= TTL_MAX):
+        if not (
+            self.ttl is None or TTL_MIN <= int(self.ttl.total_seconds()) <= TTL_MAX
+        ):
             raise ValueError("ttl must be less than 86400 seconds")
 
         return self
+
+    @field_serializer("ttl", when_used="json-unless-none")
+    def ttl_serializer(self, v: datetime.timedelta) -> int:
+        return int(v.total_seconds())
 
 
 class CheckSendAbilityMethod(TelegramGatewayMethod[RequestStatus]):

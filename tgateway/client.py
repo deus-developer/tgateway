@@ -1,5 +1,9 @@
+import datetime
+from types import TracebackType
 from typing import (
     Optional,
+    Union,
+    cast,
 )
 
 from aiohttp import (
@@ -97,7 +101,7 @@ class TelegramGateway:
         """
         box = await self.make_request_raw(method)
         if box.error is None:
-            return box.result
+            return cast(TelegramGatewayResultT, box.result)
 
         raise validate_telegram_gateway_api_error(
             error_code=box.error,
@@ -113,7 +117,7 @@ class TelegramGateway:
         code_length: Optional[int] = None,
         callback_url: Optional[str] = None,
         payload: Optional[str] = None,
-        ttl: Optional[int] = None,
+        ttl: Optional[Union[int, datetime.timedelta]] = None,
     ) -> RequestStatus:
         """Send a verification message to the specified phone number.
 
@@ -123,9 +127,9 @@ class TelegramGateway:
             sender_username (Optional[str]): Optional. The username of a verified channel to send the message.
             code (Optional[str]): Optional. Custom code to send. If not provided, Telegram generates one.
             code_length (Optional[int]): Optional. Length of the code to generate if code is not provided.
-            callback_url (Optional[str]): Optional. URL to receive delivery reports.
+            callback_url (Optional[str]): Optional. HTTPs URL to receive delivery reports.
             payload (Optional[str]): Optional. Custom payload (0-128 bytes) for internal tracking.
-            ttl (Optional[int]): Optional. Time-to-live for the message before expiration.
+            ttl (Optional[Union[int, datetime.timedelta]]): Optional. Time-to-live for the message before expiration.
 
         Returns:
             RequestStatus: The status of the sent message.
@@ -275,5 +279,10 @@ class TelegramGateway:
         """
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException],
+        exc_value: BaseException,
+        traceback: TracebackType,
+    ) -> None:
         await self.aclose()
