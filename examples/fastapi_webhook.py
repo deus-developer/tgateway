@@ -64,21 +64,21 @@ async def webhook_handler(
             signature=x_request_signature,
             body=body,
         )
-    except TimestampOutOfRangeError:
+    except TimestampOutOfRangeError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Timestamp out of range"
-        )
-    except SignatureInvalidError:
+        ) from exc
+    except SignatureInvalidError as exc:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Invalid signature"
-        )
+        ) from exc
 
     try:
         request_status = RequestStatus.model_validate_json(body)
-    except ValidationError:
+    except ValidationError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid request body"
-        )
+        ) from exc
 
     logging.info(
         dict(
