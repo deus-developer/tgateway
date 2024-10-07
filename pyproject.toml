@@ -83,8 +83,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://tgateway.deusdeveloper.com/latest/"
-Documentation = "https://tgateway.deusdeveloper.com/latest/getting-started/"
+Homepage = "https://github.com/deus-developer/tgateway"
+#Homepage = "https://tgateway.deusdeveloper.com/latest/"
+#Documentation = "https://tgateway.deusdeveloper.com/latest/getting-started/"
 Tracker = "https://github.com/deus-developer/tgateway/issues"
 Source = "https://github.com/deus-developer/tgateway"
 Telegram = "https://t.me/tgateway"
