@@ -130,7 +130,7 @@ def validate_telegram_gateway_api_error(
         return FloodWaitError(
             error_code=error_code,
             endpoint=endpoint,
-            value=int(error_code[len("FLOOD_WAIT_") :]),
+            value=int(error_code.removeprefix("FLOOD_WAIT_")),
         )
 
     subclass = api_error_code_to_exception.get(error_code, TelegramGatewayAPIError)
