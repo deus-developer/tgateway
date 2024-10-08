@@ -8,7 +8,7 @@ PAYLOAD_LENGTH_MIN = 0
 PAYLOAD_LENGTH_MAX = 128
 """The maximum length of payload."""
 
-TTL_MIN = 0
+TTL_MIN = 60
 """The minimum time-to-live seconds."""
 TTL_MAX = 86400
 """The maximum time-to-live seconds which equals to 1 day."""

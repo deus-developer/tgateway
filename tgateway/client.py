@@ -31,12 +31,15 @@ from tgateway.types import (
 class TelegramGateway:
     """A client for interacting with the Telegram Gateway API."""
 
-    def __init__(self, access_token: str, session: Optional[ClientSession] = None) -> None:
+    def __init__(
+        self, access_token: str, session: Optional[ClientSession] = None
+    ) -> None:
         """Initialize the TelegramGateway client with an access token.
 
         Args:
             access_token (str): The API access token required for authentication.
             session (Optional[ClientSession]): Optional. The aiohttp ClientSession to use for requests.
+
         Example:
             >>> gateway = TelegramGateway(access_token="<access-token>")
         """
@@ -263,7 +266,6 @@ class TelegramGateway:
             This method is useful when the `TelegramGateway` is not used within an async context manager
             (`async with`). It should be called manually to prevent resource leaks.
         """
-
         if self._auto_close:
             await self._session.close()
 
