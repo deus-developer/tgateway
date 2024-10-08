@@ -31,22 +31,19 @@ from tgateway.types import (
 class TelegramGateway:
     """A client for interacting with the Telegram Gateway API."""
 
-    def __init__(self, access_token: str) -> None:
+    def __init__(self, access_token: str, session: Optional[ClientSession] = None) -> None:
         """Initialize the TelegramGateway client with an access token.
 
         Args:
             access_token (str): The API access token required for authentication.
-
+            session (Optional[ClientSession]): Optional. The aiohttp ClientSession to use for requests.
         Example:
             >>> gateway = TelegramGateway(access_token="<access-token>")
         """
         self._access_token = access_token
-        self._session = ClientSession(
-            base_url="https://gatewayapi.telegram.org",
-            headers={
-                "Authorization": f"Bearer {self._access_token}",
-            },
-        )
+
+        self._auto_close = session is None
+        self._session = session or ClientSession()
 
     async def make_request_raw(
         self, method: TelegramGatewayMethod[TelegramGatewayResultT]
@@ -75,10 +72,12 @@ class TelegramGateway:
             by_alias=True,
             exclude_none=True,
         )
+        payload["access_token"] = self._access_token
+
         model = TelegramGatewayResult[method.__returning__]
 
         async with self._session.post(
-            url=f"/{method.__api_method__}",
+            url=f"https://gatewayapi.telegram.org/{method.__api_method__}",
             json=payload,
         ) as response:
             content = await response.read()
@@ -264,7 +263,9 @@ class TelegramGateway:
             This method is useful when the `TelegramGateway` is not used within an async context manager
             (`async with`). It should be called manually to prevent resource leaks.
         """
-        await self._session.close()
+
+        if self._auto_close:
+            await self._session.close()
 
     async def __aenter__(self) -> "TelegramGateway":
         """Enter the context manager for the TelegramGateway client.
