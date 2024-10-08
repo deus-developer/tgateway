@@ -6,7 +6,7 @@ from tgateway import TelegramGateway
 
 async def main():
     access_token = "<access_token>"
-    phone_number = "<phone_number>"
+    phone_number = "<phone-number>"
 
     async with TelegramGateway(
         access_token=access_token,
