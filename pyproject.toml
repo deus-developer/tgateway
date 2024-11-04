@@ -66,20 +66,20 @@ optionals = ["tgateway[cli]"]
 
 types = [
     "tgateway[optionals]",
-    "mypy==1.11.2",
+    "mypy==1.13.0",
 ]
 
 lint = [
     "tgateway[types]",
-    "ruff==0.6.9",
+    "ruff==0.7.2",
     "bandit==1.7.10",
-    "semgrep==1.90.0",
+    "semgrep==1.95.0",
     "codespell==2.3.0",
 ]
 
 dev = [
     "tgateway[optionals,lint]",
-    "pre-commit==4.0.0",
+    "pre-commit==4.0.1",
 ]
 
 [project.urls]
